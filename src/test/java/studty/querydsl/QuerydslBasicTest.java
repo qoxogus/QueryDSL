@@ -14,6 +14,7 @@ import studty.querydsl.entity.Team;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.*;
+import static studty.querydsl.entity.QMember.*;
 
 @SpringBootTest
 @Transactional
@@ -61,12 +62,16 @@ public class QuerydslBasicTest {
     
     @Test
     public void startQuerydsl() {
-        QMember m = new QMember("m");
+//        QMember m = new QMember("m"); //m 이름에 따라 select m from Member m 쿼리문이 이런식으로 나간다 (같은테이블을 조인해서 쓸 경우에 이렇게 직접 정의해준다 아닐 땐 static import를 해서 쓴다.
+//        QMember m = QMember.member;
 
         Member findMember = queryFactory
-                .select(m)
-                .from(m)
-                .where(m.username.eq("member1")) //파라미터 바인딩 처리
+//                .select(m)
+//                .from(m)
+//                .where(m.username.eq("member1")) //파라미터 바인딩 처리
+                .select(member) //static import (QMember.member) -> (member)
+                .from(member)
+                .where(member.username.eq("member1")) //파라미터 바인딩 처리
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
