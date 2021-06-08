@@ -1,5 +1,6 @@
 package studty.querydsl;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,8 @@ import studty.querydsl.entity.QMember;
 import studty.querydsl.entity.Team;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static studty.querydsl.entity.QMember.*;
@@ -119,5 +122,31 @@ public class QuerydslBasicTest {
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+    
+    @Test
+    public void resultFetch() {
+        List<Member> fetch = queryFactory
+                .selectFrom(member)
+                .fetch(); // List로 조회
+
+        Member fetchOne = queryFactory
+                .selectFrom(QMember.member)
+                .fetchOne(); //단건 조회
+
+        Member fetchFirst = queryFactory
+                .selectFrom(QMember.member)
+                .fetchFirst();// limit(1).fetchOne();과 같다
+
+        QueryResults<Member> results = queryFactory
+                .selectFrom(member)
+                .fetchResults(); //페이징정보 포함, total count쿼리 추가 실행)  //복잡하고 성능이 되게 중요한 페이징 쿼리에서는 쿼리를 2방을 따로 날려야한다 (content와 카운트 쿼리가 다를 수 있음 {성능 최적화를 위해 count쿼리를 더 심플하게 만듬)
+
+        results.getTotal();  // 제공됨
+        List<Member> content = results.getResults();  //제공됨  (페이징정보 포함, total count쿼리 추가 실행)
+
+        long total = queryFactory
+                .selectFrom(member)
+                .fetchCount(); //카운트 쿼리로 변경
     }
 }
