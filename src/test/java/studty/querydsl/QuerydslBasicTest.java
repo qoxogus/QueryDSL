@@ -178,4 +178,33 @@ public class QuerydslBasicTest {
         assertThat(member6.getUsername()).isEqualTo("member6");
         assertThat(memberNull.getUsername()).isNull();
     }
+
+    @Test
+    public void paging1() {
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(1)
+                .limit(2)
+                .fetch();
+
+        assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void paging2() {
+        QueryResults<Member> queryResults = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(1)
+                .limit(2)
+                .fetchResults();
+
+        System.out.println("queryResults = " + queryResults);
+
+        assertThat(queryResults.getTotal()).isEqualTo(4); //총 member는 4명
+        assertThat(queryResults.getLimit()).isEqualTo(2); //2개가져와라
+        assertThat(queryResults.getOffset()).isEqualTo(1); //첫번째 행부터
+        assertThat(queryResults.getResults().size()).isEqualTo(2); //그래서 가져온 값이 2개가 맞느냐?
+    }
 }
