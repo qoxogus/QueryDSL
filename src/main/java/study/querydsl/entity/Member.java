@@ -1,4 +1,4 @@
-package studty.querydsl.entity;
+package study.querydsl.entity;
 
 import lombok.*;
 
